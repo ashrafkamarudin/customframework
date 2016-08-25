@@ -3,12 +3,20 @@
 /**
 * 
 */
-abstract class BaseModel
+class BaseModel
 {
-    protected $database;
+    protected $viewModel;
     
+    //create the base and utility objects available to all models on model creation
     function __construct()
     {
-        $this->database = new PDO("mysql:host=localhost;dbname=test", "username", "password");
+        $this->viewModel = new ViewModel();
+        $this->commonViewData();
+    }
+
+    //establish viewModel data that is required for all views in this method (i.e. the main template)
+    protected function commonViewData()
+    {
+        //e.g. $this->viewModel->set("mainMenu",array("Home" => "/home", "Help" => "/help"));
     }
 }

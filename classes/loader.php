@@ -5,21 +5,25 @@
 */
 class Loader
 {
-    private $controller;
+    private $controllerName;
+    private $controllerClass;
     private $action;
-    private $urlvalues;
+    private $urlValues;
     
     //store URL values on object creation
-    public function __construct($urlvalues)
+    public function __construct()
     {
-        $this->urlvalues = $urlvalues;
+        $this->urlvalues = $_GET;
+
         if ($this->urlvalues['controller'] == "") {
-            $this->controller = "home";
+            $this->controllerName = "home";
+            $this->controllerClass = "HomeController";
         } else {
-            $this->controller = $this->urlvalues['controller'];
+            $this->controllerName = strtolower($this->urlvalues['controller']);
+            $this->controllerClass = ucfirst(strtolower($this->urlvalues['controller'])) . "Controller";
         }
+
         if ($this->urlvalues['action'] == "") {
-            # code...
             $this->action = "index";
         } else {
             $this->action = $this->urlvalues['action'];
@@ -27,26 +31,39 @@ class Loader
     }
 
     //establish the requested controller as an object
-    public function CreateController()
-    {
-        # does the class exist?
-        if (class_exists($this->controller)) {
-            # does the class extend the controller class?
-            if (in_array("BaseController", $parents)) {
-                # does the class contain the requested method?
-                if (method_exists($this->controller,$this->action)) {
-                    return new $this->controller($this->action,$this->urlvalues);
+    public function createController() {
+        //check our requested controller's class file exists and require it if so
+        if (file_exists("controllers/" . $this->controllerName . ".php")) {
+            require("controllers/" . $this->controllerName . ".php");
+        } else {
+            require("controllers/error.php");
+            return new ErrorController("badurl",$this->urlValues);
+        }
+                
+        //does the class exist?
+        if (class_exists($this->controllerClass)) {
+            $parents = class_parents($this->controllerClass);
+            
+            //does the class inherit from the BaseController class?
+            if (in_array("BaseController",$parents)) {   
+                //does the requested class contain the requested action as a method?
+                if (method_exists($this->controllerClass,$this->action))
+                {
+                    return new $this->controllerClass($this->action,$this->urlValues);
                 } else {
-                    # bad method error
-                    return new Error("badurl",$this->urlvalues);
+                    //bad action/method error
+                    require("controllers/error.php");
+                    return new ErrorController("badurl",$this->urlValues);
                 }
             } else {
-                # bad method error
-                return new Error("badurl",$this->urlvalues);
+                //bad controller error
+                require("controllers/error.php");
+                return new ErrorController("badurl",$this->urlValues);
             }
         } else {
-            # bad method error
-            return new Error("badurl",$this->urlvalues);
+            //bad controller error
+            require("controllers/error.php");
+            return new ErrorController("badurl",$this->urlValues);
         }
     }
 }

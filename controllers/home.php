@@ -3,11 +3,21 @@
 /**
 * 
 */
-class Home extends BaseController
+class HomeController extends BaseController
 {
+    //add to the parent constructor
+    public function __construct($action, $urlValues)
+    {
+        parent::__construct($action, $urlValues);
+
+        //create the model object
+        require("models/home.php");
+        $this->model = new HomeModel();
+    }
+
+    //default method
     protected function index()
     {
-        $viewmodel = "Just a basic string";
-        $this->ReturnView($viewmodel, true);
+        $this->view->output($this->model->index());
     }
 }

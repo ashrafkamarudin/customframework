@@ -1,17 +1,12 @@
 <?php
 
 //require the general classes
-require("classes/loader.php");
-require("classes/basecontroller.php");
+require("classes/basecontroller.php");  
 require("classes/basemodel.php");
+require("classes/view.php");
+require("classes/viewmodel.php");
+require("classes/loader.php");
 
-//require the model classes
-require("models/home.php");
-
-//require the controller classes
-require("controllers/home.php");
-
-//create the controller and execute the action
-$loader = new loader($_GET);
-$controller = $loader->CreateController();
-$controller->ExecuteAction();
+$loader = new Loader(); //create the loader object
+$controller = $loader->createController(); //creates the requested controller object based on the 'controller' URL value
+$controller->executeAction(); //execute the requested controller's requested method based on the 'action' URL value. Controller methods output a View.

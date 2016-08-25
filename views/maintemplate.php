@@ -1,5 +1,9 @@
-<ul>
-    <?php foreach($viewmodel as $item) { ?>
-    <li><?php echo $item; ?></li>
-    <?php } ?>
-</ul>
+<!DOCTYPE html>
+<html>
+<head>
+<title><?php echo $viewModel->get('pageTitle'); ?></title>
+</head>
+<body>
+<?php require($this->viewFile); ?>
+</body>
+</html>
